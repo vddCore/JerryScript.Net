@@ -288,7 +288,7 @@ namespace JerryScript.Net.NativeBindings
         [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern uint jerry_run(uint func_val);
 
-        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "jerry_eval")]
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, EntryPoint = nameof(jerry_eval))]
         private static extern uint jerry_eval_INTERNAL(
             [MarshalAs(UnmanagedType.LPUTF8Str)] string source_p,
             uint source_size,
@@ -680,6 +680,99 @@ namespace JerryScript.Net.NativeBindings
         public static extern uint jerry_create_realm();
 
         [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint jerry_set_property(uint obj, uint property_name, uint property_value);
+        public static extern uint jerry_has_property(uint obj_val, uint prop_name_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_has_own_property(uint obj_val, uint prop_name_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool jerry_has_internal_property(uint obj_val, uint prop_name_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool jerry_delete_property(uint obj_val, uint prop_name_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool jerry_delete_property_by_index(uint obj_val, uint index);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool jerry_delete_internal_property(uint obj_val, uint prop_name_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_get_property(uint obj_val, uint prop_name_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_get_property_by_index(uint obj_val, uint index);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_get_internal_property(uint obj_val, uint prop_name_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_set_property(uint obj_val, uint prop_name_val, uint value_to_set);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_set_property_by_index(uint obj_val, uint index, uint value_to_set);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool jerry_set_internal_property(uint obj_val, uint prop_name_val, uint value_to_set);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void jerry_init_property_descriptor_fields(ref jerry_property_descriptor_t prop_desc_p);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_define_own_property(uint obj_val, uint prop_name_val,
+            ref jerry_property_descriptor_t prop_desc_p);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool jerry_get_own_property_descriptor(uint obj_val, uint prop_name_val,
+            ref jerry_property_descriptor_t prop_desc_p);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool jerry_free_property_descriptor_fields(ref jerry_property_descriptor_t prop_desc_p);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl, EntryPoint = nameof(jerry_call_function))]
+        private static extern uint jerry_call_function_INTERNAL(
+            uint func_obj_val,
+            uint this_val,
+            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U4)]
+            uint[] args_p,
+            uint args_count
+        );
+
+        public static uint jerry_call_function(uint func_obj_val, uint this_val, uint[] args)
+        {
+            return jerry_call_function_INTERNAL(
+                func_obj_val,
+                this_val,
+                args,
+                (uint)args.Length
+            );
+        }
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl,
+            EntryPoint = nameof(jerry_construct_object))]
+        private static extern uint jerry_construct_object_INTERNAL(
+            uint func_obj_val,
+            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U4)]
+            uint[] args_p,
+            uint args_count
+        );
+
+        public static uint jerry_construct_object(uint func_obj_val, uint[] args)
+        {
+            return jerry_construct_object_INTERNAL(
+                func_obj_val,
+                args,
+                (uint)args.Length
+            );
+        }
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_get_object_keys(uint obj_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_get_prototype(uint obj_val);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint jerry_set_prototype(uint obj_val, uint proto_obj_val);
     }
 }
